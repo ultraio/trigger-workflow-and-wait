@@ -80,11 +80,19 @@ function validate_args {
 function trigger_workflow {
   echo "https://api.github.com/repos/${INPUT_OWNER}/${INPUT_REPO}/actions/workflows/$INPUT_WORKFLOW_FILE_NAME/dispatches"
 
-  curl -X POST "https://api.github.com/repos/${INPUT_OWNER}/${INPUT_REPO}/actions/workflows/$INPUT_WORKFLOW_FILE_NAME/dispatches" \
+  if response=$(curl -X POST "https://api.github.com/repos/${INPUT_OWNER}/${INPUT_REPO}/actions/workflows/$INPUT_WORKFLOW_FILE_NAME/dispatches" \
     -H "Accept: application/vnd.github.v3+json" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer ${INPUT_GITHUB_TOKEN}" \
-    --data "{\"ref\":\"${ref}\",\"inputs\":${inputs}}"
+    --data "{\"ref\":\"${ref}\",\"inputs\":${inputs}}")
+  then
+    echo "$response"
+  else
+    echo "api failed:"
+    echo "response: $response"
+    exit 1
+  fi
+
   echo "Sleeping for $wait_interval seconds"
   sleep $wait_interval
 }
