@@ -87,6 +87,10 @@ function trigger_workflow {
     --data "{\"ref\":\"${ref}\",\"inputs\":${inputs}}")
   then
     echo "$response"
+    if echo "$response" | grep -q "\"documentation_url\""; then
+      echo "api failed"
+      exit 1
+    fi
   else
     echo "api failed:"
     echo "response: $response"
