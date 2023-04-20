@@ -123,7 +123,8 @@ get_workflow_runs() {
 
   echo "Getting workflow runs using query: ${query}" >&2
 
-  api "workflows/${INPUT_WORKFLOW_FILE_NAME}/runs?${query}" |
+  # api "workflows/${INPUT_WORKFLOW_FILE_NAME}/runs?${query}" |
+  api "runs?${query}" |
   jq -r '.workflow_runs[].id' |
   sort # Sort to ensure repeatable order, and lexicographically for compatibility with join
 }
