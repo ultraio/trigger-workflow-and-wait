@@ -67,6 +67,7 @@ validate_args() {
     fi
     
     INPUT_GITHUB_TOKEN=`node index.js`
+    echo "${INPUT_GITHUB_TOKEN}"
   fi
 
   if [ -z "${INPUT_WORKFLOW_FILE_NAME}" ]
