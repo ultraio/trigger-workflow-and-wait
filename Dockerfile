@@ -1,3 +1,4 @@
+# uses node 19.2.0
 FROM node:alpine3.15
 
 RUN apk update && \

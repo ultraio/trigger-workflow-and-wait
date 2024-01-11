@@ -66,9 +66,10 @@ async function run() {
         // Register the secret to mask it in the output
         core.setSecret(accessToken.token);
         //core.setOutput('token', accessToken.token);
-        process.stdout.write(accessToken.token);
         core.info(JSON.stringify(accessToken));
-        core.info(`Successfully generated an access token for application.`)
+        core.info(`Successfully generated an access token for application.`);
+        // output the access token to be used by the calling process
+        process.stdout.write(accessToken.token);
       } else {
         fail('No installation of the specified GitHub application was able to be retrieved.');
       }
