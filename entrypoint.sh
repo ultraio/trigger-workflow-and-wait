@@ -66,6 +66,7 @@ validate_args() {
       exit 1
     fi
     
+    echo `ls -l`
     INPUT_GITHUB_TOKEN=`node index.js`
     echo "${INPUT_GITHUB_TOKEN}"
   fi
