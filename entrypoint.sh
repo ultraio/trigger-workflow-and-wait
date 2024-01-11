@@ -55,11 +55,18 @@ validate_args() {
 
   if [ -z "${INPUT_GITHUB_TOKEN}" ]
   then
-    echo "Error: Github token is required. You can head over settings and"
-    echo "under developer, you can create a personal access tokens. The"
-    echo "token requires repo access."
-    usage_docs
-    exit 1
+    # application_id and application_private_key are only used if github token isn't provided
+    if [ -z "${INPUT_APPLICATION_PRIVATE_KEY}" ] || [ -z "${INPUT_APPLICATION_ID}" ]
+    then
+      echo "Error: Github token or application ID + private key is required."
+      echo "To generate the token you can head over settings and under"
+      echo "developer, you can create a personal access tokens. The token"
+      echo "requires repo access."
+      usage_docs
+      exit 1
+    fi
+    
+    INPUT_GITHUB_TOKEN=`node index.js`
   fi
 
   if [ -z "${INPUT_WORKFLOW_FILE_NAME}" ]

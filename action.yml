@@ -12,8 +12,8 @@ inputs:
     description: "The repository where the workflow is contained."
     required: true
   github_token:
-    description: "The Github access token with access to the repository. It is recommended you put this token under secrets."
-    required: true
+    description: "The Github access token with access to the repository. It is recommended you put this token under secrets. Can be substituted by application_private_key and application_id"
+    required: false
   github_user:
     description: "The name of the github user whose access token is being used to trigger the workflow."
     required: false
@@ -46,6 +46,12 @@ inputs:
     description: "The Github access token with access to the repository for comment URL. It is recommended you put this token under secrets."
     required: false
     default: ${{ github.token }}
+  application_private_key:
+    description: "GitHub Application Private Key value. Can be used instead of github_token"
+    required: false
+  application_id:
+    description: "GitHub Application ID value."
+    required: false
 outputs:
   workflow_id:
     description: The ID of the workflow that was triggered by this action

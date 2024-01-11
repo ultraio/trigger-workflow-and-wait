@@ -1,0 +1,31 @@
+# Tests this action success by the application already being installed on the repository
+
+name: Test Success - repository - installed - limited permissions
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use action
+        id: use_action
+        uses: ./
+        with:
+          application_id: ${{ secrets.APPLICATION_ID }}
+          application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
+          permissions: issues:read, actions:write
+
+      - name: Use token to read details
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.use_action.outputs.token }}
+          script: |
+            const repo = await github.rest.repos.get(context.repo);
+            console.log(JSON.stringify(repo, null, 2));
