@@ -66,7 +66,9 @@ validate_args() {
       exit 1
     fi
 
-    INPUT_GITHUB_TOKEN=`node /index.js`
+    # output from JS script contains additional logs not related to the token
+    # part of the output will contain a json object with "token":"***"
+    INPUT_GITHUB_TOKEN=`node /index.js | grep -o '"token":"[^"]*' | grep -o '[^"]*$'`
     echo "Got github token: ${INPUT_GITHUB_TOKEN}"
   fi
 
