@@ -26,7 +26,7 @@ GITHUB_SERVER_URL="${SERVER_URL:-https://github.com}"
 
 validate_args() {
   wait_interval=10 # Waits for 10 seconds
-  application_token_fetch_interval=20 # Waits for 30 minutes before fetching a new token
+  application_token_fetch_interval=1800 # Waits for 30 minutes before fetching a new token
   next_application_token_fetch_timestamp=0
   if [ "${INPUT_WAIT_INTERVAL}" ]
   then
