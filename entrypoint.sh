@@ -134,8 +134,8 @@ lets_wait() {
 
   local current_time=$(date +%s)
   # only need to fetch if interval is defined, otherwise there is no Github application used
-  if (( application_token_fetch_interval > 0 )); then
-    if (( current_time >= last_application_token_fetch_timestamp + application_token_fetch_interval )); then
+  if (( "$application_token_fetch_interval" > 0 )); then
+    if (( "$current_time" >= "$last_application_token_fetch_timestamp" + "$application_token_fetch_interval" )); then
       fetch_application_token
     fi
   fi
