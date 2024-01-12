@@ -134,7 +134,7 @@ lets_wait() {
 
   local current_time=$(date +%s)
   local 
-  # only need to fetch if interval is defined, otherwise there is no Github application used
+  # only need to fetch if next fetch timestamp is defined, otherwise there is no Github application used
   if [ "$next_application_token_fetch_timestamp" -gt 0 ]; then
     if [ "$current_time" -ge "$next_application_token_fetch_timestamp" ]; then
       fetch_application_token
