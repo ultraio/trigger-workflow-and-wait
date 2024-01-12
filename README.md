@@ -13,7 +13,7 @@ When deploying an app you may need to deploy additional services, this Github Ac
 | ---------------------    | ---------- | ----------- | --------------------- |
 | `owner`                  | True       | N/A         | The owner of the repository where the workflow is contained. |
 | `repo`                   | True       | N/A         | The repository where the workflow is contained. |
-| `github_token`           | True       | N/A         | The Github access token with access to the repository. Its recommended you put it under secrets. |
+| `github_token`           | False      | N/A         | The Github access token with access to the repository. Its recommended you put it under secrets. |
 | `workflow_file_name`     | True       | N/A         | The reference point. For example, you could use main.yml. |
 | `github_user`            | False      | N/A         | The name of the github user whose access token is being used to trigger the workflow. |
 | `ref`                    | False      | main        | The reference of the workflow run. The reference can be a branch, tag, or a commit SHA. |
@@ -24,7 +24,9 @@ When deploying an app you may need to deploy additional services, this Github Ac
 | `wait_workflow`          | False      | `true`      | Wait for workflow to finish. |
 | `comment_downstream_url` | False      | ``          | A comments API URL to comment the current downstream job URL to. Default: no comment |
 | `comment_github_token`   | False      | `${{github.token}}`          | token used for pull_request comments |
-
+| `application_private_key`| False      | N/A         | Private key for Github applciation to be used instead of Github token |
+| `application_id`         | False      | N/A         | ID of Github application to be used instead of Github token |
+| `application_wait_interval` | False   | 1800        | The number of seconds delay between fetching a new token from Github application  |
 
 ## Example
 

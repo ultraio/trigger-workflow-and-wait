@@ -11,11 +11,22 @@ usage_docs() {
   echo "    github_token: \${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}"
   echo "    workflow_file_name: main.yaml"
 }
+
+fetch_application_token() {
+  # output from JS script contains additional logs not related to the token
+  # part of the output will contain a json object with "token":"***"
+  INPUT_GITHUB_TOKEN=`node /index.js | grep -o '"token":"[^"]*' | grep -o '[^"]*$'`
+  echo "Got Github token using Github application: ${INPUT_GITHUB_TOKEN}"
+  last_application_token_fetch_timestamp=$(date +%s)
+}
+
 GITHUB_API_URL="${API_URL:-https://api.github.com}"
 GITHUB_SERVER_URL="${SERVER_URL:-https://github.com}"
 
 validate_args() {
   wait_interval=10 # Waits for 10 seconds
+  application_token_fetch_interval=-1 # Need to fetch new token only if using Github application
+  last_application_token_fetch_timestamp=0
   if [ "${INPUT_WAIT_INTERVAL}" ]
   then
     wait_interval=${INPUT_WAIT_INTERVAL}
@@ -66,10 +77,12 @@ validate_args() {
       exit 1
     fi
 
-    # output from JS script contains additional logs not related to the token
-    # part of the output will contain a json object with "token":"***"
-    INPUT_GITHUB_TOKEN=`node /index.js | grep -o '"token":"[^"]*' | grep -o '[^"]*$'`
-    echo "Got github token: ${INPUT_GITHUB_TOKEN}"
+    application_token_fetch_interval=20 # Waits for 30 minutes before fetching a new token
+    if [ "${INPUT_APPLICATION_WAIT_INTERVAL}" ]
+    then
+      application_token_fetch_interval=${INPUT_APPLICATION_WAIT_INTERVAL}
+    fi
+    fetch_application_token
   fi
 
   if [ -z "${INPUT_WORKFLOW_FILE_NAME}" ]
@@ -90,11 +103,6 @@ validate_args() {
   then
     ref="${INPUT_REF}"
   fi
-}
-
-lets_wait() {
-  echo "Sleeping for ${wait_interval} seconds"
-  sleep "$wait_interval"
 }
 
 api() {
@@ -123,6 +131,14 @@ lets_wait() {
   local interval=${1:-$wait_interval}
   echo >&2 "Sleeping for $interval seconds"
   sleep "$interval"
+
+  local current_time=$(date +%s)
+  # only need to fetch if interval is defined, otherwise there is no Github application used
+  if (( application_token_fetch_interval > 0 )); then
+    if (( current_time >= last_application_token_fetch_timestamp + application_token_fetch_interval )); then
+      fetch_application_token
+    fi
+  fi
 }
 
 # Return the ids of the most recent workflow runs, optionally filtered by user
