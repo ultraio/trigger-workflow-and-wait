@@ -17,7 +17,8 @@ fetch_application_token() {
   # part of the output will contain a json object with "token":"***"
   INPUT_GITHUB_TOKEN=`node /index.js | grep -o '"token":"[^"]*' | grep -o '[^"]*$'`
   echo "Got Github token using Github application: ${INPUT_GITHUB_TOKEN}"
-  last_application_token_fetch_timestamp=$(date +%s)
+  next_application_token_fetch_timestamp=$(date +%s)
+  next_application_token_fetch_timestamp=$((next_application_token_fetch_timestamp + application_token_fetch_interval))
 }
 
 GITHUB_API_URL="${API_URL:-https://api.github.com}"
@@ -25,8 +26,8 @@ GITHUB_SERVER_URL="${SERVER_URL:-https://github.com}"
 
 validate_args() {
   wait_interval=10 # Waits for 10 seconds
-  application_token_fetch_interval=-1 # Need to fetch new token only if using Github application
-  last_application_token_fetch_timestamp=0
+  application_token_fetch_interval=20 # Waits for 30 minutes before fetching a new token
+  next_application_token_fetch_timestamp=0
   if [ "${INPUT_WAIT_INTERVAL}" ]
   then
     wait_interval=${INPUT_WAIT_INTERVAL}
@@ -77,7 +78,6 @@ validate_args() {
       exit 1
     fi
 
-    application_token_fetch_interval=20 # Waits for 30 minutes before fetching a new token
     if [ "${INPUT_APPLICATION_WAIT_INTERVAL}" ]
     then
       application_token_fetch_interval=${INPUT_APPLICATION_WAIT_INTERVAL}
@@ -133,9 +133,10 @@ lets_wait() {
   sleep "$interval"
 
   local current_time=$(date +%s)
+  local 
   # only need to fetch if interval is defined, otherwise there is no Github application used
-  if (( "$application_token_fetch_interval" > 0 )); then
-    if (( "$current_time" >= "$last_application_token_fetch_timestamp" + "$application_token_fetch_interval" )); then
+  if [ "$next_application_token_fetch_timestamp" -gt 0 ]; then
+    if [ "$current_time" -ge "$next_application_token_fetch_timestamp" ]; then
       fetch_application_token
     fi
   fi
